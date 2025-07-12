@@ -15,6 +15,8 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/it-db")
         startDate: new Date("2023-01-01"),
         expiryDate: new Date("2024-12-31"),
         assignedTo: "Admin Staff",
+        seats: 3,
+        status: "Active",
       },
       {
         name: "Kaspersky Endpoint Security",
@@ -23,6 +25,8 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/it-db")
         startDate: new Date("2022-11-01"),
         expiryDate: new Date("2024-11-01"),
         assignedTo: "Reception PC",
+        seats: 3,
+        status: "Active",
       },
       {
         name: "Jane EMR",
@@ -31,6 +35,8 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/it-db")
         startDate: new Date("2023-06-01"),
         expiryDate: new Date("2024-06-01"),
         assignedTo: "All Staff",
+        seats: 10,
+        status: "Expired",
       },
     ]);
   })

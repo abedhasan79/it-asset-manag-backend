@@ -6,7 +6,9 @@ const licenseSchema = new mongoose.Schema({
   key: String,
   startDate: Date,
   expiryDate: Date,
+  seats: Number,
   assignedTo: String, // optional user or device
+  status: String,
 });
 
 module.exports = mongoose.model("License", licenseSchema);

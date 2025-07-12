@@ -1,8 +1,19 @@
 const License = require("../models/License");
 
 exports.getLicenses = async (req, res) => {
-  const licenses = await License.find();
-  res.json(licenses);
+  try {
+    const licenses = await License.find();
+
+    const today = new Date();
+    const enriched = licenses.map((lic) => ({
+      ...lic.toObject(),
+      status: new Date(lic.expiryDate) >= today ? "Active" : "Inactive",
+    }));
+
+    res.json(enriched);
+  } catch (err) {
+    res.status(500).json({ message: "Server Error" });
+  }
 };
 
 exports.createLicense = async (req, res) => {
