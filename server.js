@@ -6,7 +6,7 @@ const connectDB = require("./config/db");
 const assetRoutes = require("./routes/assetRoutes");
 const licenseRoutes = require("./routes/licenseRoutes");
 const ticketRoutes = require("./routes/ticketRoutes");
-const authRoutes = require("./routes/authRoutes");
+// const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 connectDB();
@@ -18,7 +18,8 @@ app.use(express.json());
 app.use("/api/assets", assetRoutes);
 app.use("/api/licenses", licenseRoutes);
 app.use("/api/tickets", ticketRoutes);
-app.use("/api/auth", authRoutes);
+// app.use("/api/auth", authRoutes);
+app.use("/api/auth", require("./routes/auth"));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
