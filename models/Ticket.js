@@ -1,0 +1,20 @@
+const mongoose = require("mongoose");
+
+const ticketSchema = new mongoose.Schema({
+  subject: String,
+  description: String,
+  status: {
+    type: String,
+    enum: ["Open", "In Progress", "Closed"],
+    default: "Open"
+  },
+  submittedBy: String,     // could be email or user name
+  assignedTo: String,      // IT staff
+  asset: String,           // optional: asset name or ID
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+module.exports = mongoose.model("Ticket", ticketSchema);
