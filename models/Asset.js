@@ -8,6 +8,7 @@ const assetSchema = new mongoose.Schema({
   warrantyExpiry: Date,
   assignedTo: String,
   location: String,
+  status: String,
 });
 
 module.exports = mongoose.model("Asset", assetSchema);

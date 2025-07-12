@@ -16,6 +16,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/it-db')
                 warrantyExpiry: new Date("2026-04-15"),
                 assignedTo: "Dr. Ahmed",
                 location: "Exam Room 1",
+                status: "Active",
             },
             {
                 name: "HP LaserJet Pro M404n",
@@ -25,6 +26,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/it-db')
                 warrantyExpiry: new Date("2024-08-10"),
                 assignedTo: "",
                 location: "Reception",
+                status: "Active",
             },
             {
                 name: "MacBook Pro 14”",
@@ -34,6 +36,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/it-db')
                 warrantyExpiry: new Date("2025-12-01"),
                 assignedTo: "Manager",
                 location: "Admin Office",
+                status: "Inctive",
             },
         ]);
     })
