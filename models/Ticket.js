@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const ticketSchema = new mongoose.Schema({
-  subject: String,
+  title: String,
   description: String,
   status: {
     type: String,
@@ -15,6 +15,7 @@ const ticketSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  priority: String,
 });
 
 module.exports = mongoose.model("Ticket", ticketSchema);
