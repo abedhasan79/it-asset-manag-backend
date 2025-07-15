@@ -84,3 +84,20 @@ exports.deleteLicense = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete license' });
   }
 };
+
+exports.summaryLicense = async (req, res) => {
+  try {
+    const now = new Date();
+    const soon = new Date();
+    soon.setDate(now.getDate() + 30); // licenses expiring in next 30 days
+
+    const expiringSoon = await License.countDocuments({
+      clinicId: req.user.clinicId,
+      renewalDate: { $gte: now, $lte: soon }
+    });
+
+    res.json({ expiringSoon });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch license summary' });
+  }
+};

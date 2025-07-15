@@ -1,5 +1,5 @@
 const Asset = require('../models/Asset');
-
+const mongoose = require('mongoose');
 // Create new asset
 exports.createAsset = async (req, res) => {
   try {
@@ -84,5 +84,41 @@ exports.deleteAsset = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to delete asset' });
+  }
+};
+
+exports.summaryAsset = async (req, res) => {
+  try {
+    const clinicObjectId = new mongoose.Types.ObjectId(req.user.clinicId);
+
+    // 1. Total asset count
+    const totalAssets = await Asset.countDocuments({ clinicId: clinicObjectId });
+
+    // 2. Assets grouped by type
+    const assetsByTypeAgg = await Asset.aggregate([
+      { $match: { clinicId: clinicObjectId } },
+      { $group: { _id: '$type', count: { $sum: 1 } } }
+    ]);
+    const assetsByType = assetsByTypeAgg.map(({ _id, count }) => ({ type: _id, count }));
+
+    // 3. Assets with warranty expiring in the next 30 days
+    const today = new Date();
+    const next30Days = new Date();
+    next30Days.setDate(today.getDate() + 30);
+
+    const expiringWarranties = await Asset.find({
+      clinicId: clinicObjectId,
+      warrantyExpiry: { $gte: today, $lte: next30Days }
+    }).select('name type warrantyExpiry');
+
+    // Return all summary data
+    res.json({
+      totalAssets,
+      assetsByType,
+      expiringWarranties,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch asset summary' });
   }
 };

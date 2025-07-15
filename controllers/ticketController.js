@@ -1,5 +1,5 @@
 const Ticket = require('../models/Ticket');
-
+const mongoose = require('mongoose');
 // Create new ticket
 exports.createTicket = async (req, res) => {
   try {
@@ -81,5 +81,36 @@ exports.deleteTicket = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to delete ticket' });
+  }
+};
+
+exports.summaryTicket = async (req, res) => {
+  try {
+    const clinicObjectId = new mongoose.Types.ObjectId(req.user.clinicId);
+
+    const ticketsByStatusAgg = await Ticket.aggregate([
+      {
+        $match: {
+          clinicId: clinicObjectId,
+          status: { $ne: 'closed' } // Exclude closed tickets
+        }
+      },
+      {
+        $group: {
+          _id: '$status',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const ticketsByStatus = ticketsByStatusAgg.map(({ _id, count }) => ({
+      status: _id,
+      count
+    }));
+
+    res.json({ ticketsByStatus });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch ticket summary' });
   }
 };
