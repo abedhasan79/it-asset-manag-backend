@@ -1,10 +1,19 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const assetController = require("../controllers/assetController");
+const auth = require('../middleware/authMiddleware');
+const {
+  createAsset,
+  getAssets,
+  getAssetById,
+  updateAsset,
+  deleteAsset
+} = require('../controllers/assetController');
 
-router.get("/", assetController.getAssets);
-router.post("/", assetController.createAsset);
-router.put("/:id", assetController.updateAsset);
-router.delete("/:id", assetController.deleteAsset);
+// Protected routes
+router.post('/', auth, createAsset);
+router.get('/', auth, getAssets);
+router.get('/:id', auth, getAssetById);
+router.put('/:id', auth, updateAsset);
+router.delete('/:id', auth, deleteAsset);
 
 module.exports = router;

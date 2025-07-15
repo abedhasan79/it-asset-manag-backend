@@ -1,10 +1,19 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const licenseController = require("../controllers/licenseController");
+const auth = require('../middleware/authMiddleware');
+const {
+  createLicense,
+  getLicenses,
+  getLicenseById,
+  updateLicense,
+  deleteLicense
+} = require('../controllers/licenseController');
 
-router.get("/", licenseController.getLicenses);
-router.post("/", licenseController.createLicense);
-router.put("/:id", licenseController.updateLicense);
-router.delete("/:id", licenseController.deleteLicense);
+// Protected Routes
+router.post('/', auth, createLicense);
+router.get('/', auth, getLicenses);
+router.get('/:id', auth, getLicenseById);
+router.put('/:id', auth, updateLicense);
+router.delete('/:id', auth, deleteLicense);
 
 module.exports = router;

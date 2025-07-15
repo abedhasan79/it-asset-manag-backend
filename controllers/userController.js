@@ -1,28 +1,24 @@
-const User = require("../models/User");
+const User = require('../models/User');
+const Clinic = require('../models/Clinic');
 
-// Get all users (optional: filter by role)
-const getAllUsers = async (req, res) => {
+// Get logged-in user profile
+exports.getCurrentUser = async (req, res) => {
   try {
-    const users = await User.find().select("-password"); // omit passwords
-    res.json(users);
+    const user = await User.findById(req.user.id).select('-password');
+    res.json(user);
   } catch (err) {
-    console.error("Error fetching users:", err);
-    res.status(500).json({ message: "Failed to fetch users" });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to get user' });
   }
 };
 
-// Get only IT staff
-const getITStaff = async (req, res) => {
+// Get clinic info (for header/settings)
+exports.getClinicInfo = async (req, res) => {
   try {
-    const users = await User.find({ role: "it" }).select("-password");
-    res.json(users);
+    const clinic = await Clinic.findById(req.user.clinicId);
+    res.json(clinic);
   } catch (err) {
-    console.error("Error fetching IT staff:", err);
-    res.status(500).json({ message: "Failed to fetch IT staff" });
+    console.error(err);
+    res.status(500).json({ error: 'Failed to get clinic info' });
   }
-};
-
-module.exports = {
-  getAllUsers,
-  getITStaff,
 };

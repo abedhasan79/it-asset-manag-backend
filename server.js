@@ -1,28 +1,46 @@
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const connectDB = require("./config/db");
+const express = require('express');
+const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+const cors = require('cors');
 
-const assetRoutes = require("./routes/assetRoutes");
-const licenseRoutes = require("./routes/licenseRoutes");
-const ticketRoutes = require("./routes/ticketRoutes");
-// const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/userRoutes");
-
-
+// Load env variables
 dotenv.config();
-connectDB();
 
+// Import routes
+const authRoutes = require('./routes/authRoutes');
+const assetRoutes = require('./routes/assetRoutes');
+const licenseRoutes = require('./routes/licenseRoutes');
+const ticketRoutes = require('./routes/ticketRoutes');
+// const clinicRoutes = require('./routes/clinicRoutes');
+const userRoutes = require('./routes/userRoutes');
+
+// DB connection
+const connectDB = require('./config/db');
+
+// Initialize app
 const app = express();
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/assets", assetRoutes);
-app.use("/api/licenses", licenseRoutes);
-app.use("/api/tickets", ticketRoutes);
-// app.use("/api/auth", authRoutes);
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/users", userRoutes);
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/assets', assetRoutes);
+app.use('/api/licenses', licenseRoutes);
+app.use('/api/tickets', ticketRoutes);
+// app.use('/api/clinics', clinicRoutes);
+app.use('/api/users', userRoutes);
 
+// Root route
+app.get('/', (req, res) => {
+    res.send('API is running...');
+});
+
+// Connect to DB and start server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+connectDB().then(() => {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+});

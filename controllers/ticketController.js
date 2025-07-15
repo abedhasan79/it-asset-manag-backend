@@ -1,22 +1,85 @@
-const Ticket = require("../models/Ticket");
+const Ticket = require('../models/Ticket');
 
-exports.getTickets = async (req, res) => {
-  const tickets = await Ticket.find().sort({ createdAt: -1 });
-  res.json(tickets);
-};
-
+// Create new ticket
 exports.createTicket = async (req, res) => {
-  const newTicket = new Ticket(req.body);
-  const saved = await newTicket.save();
-  res.status(201).json(saved);
+  try {
+    const { title, description, status = 'open', priority = 'medium' } = req.body;
+
+    const ticket = new Ticket({
+      clinicId: req.user.clinicId,
+      title,
+      description,
+      status,
+      priority
+    });
+
+    await ticket.save();
+    res.status(201).json(ticket);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to create ticket' });
+  }
 };
 
+// Get all tickets for clinic
+exports.getTickets = async (req, res) => {
+  try {
+    const tickets = await Ticket.find({ clinicId: req.user.clinicId }).sort({ createdAt: -1 });
+    res.json(tickets);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch tickets' });
+  }
+};
+
+// Get ticket by ID
+exports.getTicketById = async (req, res) => {
+  try {
+    const ticket = await Ticket.findOne({
+      _id: req.params.id,
+      clinicId: req.user.clinicId
+    });
+
+    if (!ticket) return res.status(404).json({ error: 'Ticket not found' });
+
+    res.json(ticket);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to fetch ticket' });
+  }
+};
+
+// Update ticket
 exports.updateTicket = async (req, res) => {
-  const updated = await Ticket.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updated);
+  try {
+    const updated = await Ticket.findOneAndUpdate(
+      { _id: req.params.id, clinicId: req.user.clinicId },
+      req.body,
+      { new: true }
+    );
+
+    if (!updated) return res.status(404).json({ error: 'Ticket not found' });
+
+    res.json(updated);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update ticket' });
+  }
 };
 
+// Delete ticket
 exports.deleteTicket = async (req, res) => {
-  await Ticket.findByIdAndDelete(req.params.id);
-  res.json({ message: "Ticket deleted" });
+  try {
+    const deleted = await Ticket.findOneAndDelete({
+      _id: req.params.id,
+      clinicId: req.user.clinicId
+    });
+
+    if (!deleted) return res.status(404).json({ error: 'Ticket not found' });
+
+    res.json({ message: 'Ticket deleted' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to delete ticket' });
+  }
 };
